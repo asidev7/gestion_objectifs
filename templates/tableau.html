@@ -1,0 +1,275 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - {{ profil.nom_complet }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Lato', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+            <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-blue-400">Suivi des Heures</h1>
+                    <p class="text-gray-400 text-sm">{{ profil.nom_complet }} - {{ profil.domaine_specialisation|default:"Stagiaire" }}</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-xs text-gray-400">Taux horaire</p>
+                        <p class="text-lg font-bold text-blue-400">{{ profil.taux_horaire }} €/h</p>
+                    </div>
+                    {% if profil.photo %}
+                    <img src="{{ profil.photo.url }}" alt="{{ profil.nom_complet }}" class="w-12 h-12 rounded-full object-cover">
+                    {% else %}
+                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold">{{ profil.user.first_name.0 }}{{ profil.user.last_name.0 }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="container mx-auto px-4 py-6">
+            <!-- Messages -->
+            {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                <div class="bg-{% if message.tags == 'error' %}red{% else %}green{% endif %}-500 bg-opacity-20 border border-{% if message.tags == 'error' %}red{% else %}green{% endif %}-500 text-{% if message.tags == 'error' %}red{% else %}green{% endif %}-400 px-4 py-3 rounded-lg mb-2">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Salary Overview - Trimestre -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg p-6 border border-blue-500 shadow-lg">
+                    <p class="text-blue-200 text-sm mb-2">Salaire du Mois ({{ mois_nom }})</p>
+                    <p class="text-4xl font-bold text-white mb-1">{{ salaire_mois|floatformat:2 }} €</p>
+                    <p class="text-blue-200 text-xs">{{ heures_mois|floatformat:1 }} heures travaillées</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg p-6 border border-purple-500 shadow-lg">
+                    <p class="text-purple-200 text-sm mb-2">Salaire Trimestre ({{ trimestre_label }})</p>
+                    <p class="text-4xl font-bold text-white mb-1">{{ salaire_trimestre|floatformat:2 }} €</p>
+                    <p class="text-purple-200 text-xs">{{ heures_trimestre|floatformat:1 }} heures</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-green-600 to-green-800 rounded-lg p-6 border border-green-500 shadow-lg">
+                    <p class="text-green-200 text-sm mb-2">Heures Cette Semaine</p>
+                    <p class="text-4xl font-bold text-white mb-1">{{ heures_semaine|floatformat:1 }}h</p>
+                    <p class="text-green-200 text-xs">{{ taches_semaine }} tâches en cours</p>
+                </div>
+            </div>
+
+            <!-- Add Task Form -->
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 md:p-6 mb-6">
+                <h2 class="text-xl md:text-2xl font-bold mb-6 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Ajouter une Tâche
+                </h2>
+                <form method="POST" action="{% url 'ajouter_tache' %}" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">Nom de la tâche *</label>
+                        <input type="text" name="titre" required placeholder="Ex: Développer module authentification" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">Jour de la semaine *</label>
+                        <select name="jour_semaine" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 text-white">
+                            <option value="">Sélectionner un jour</option>
+                            <option value="lundi">Lundi</option>
+                            <option value="mardi">Mardi</option>
+                            <option value="mercredi">Mercredi</option>
+                            <option value="jeudi">Jeudi</option>
+                            <option value="vendredi">Vendredi</option>
+                            <option value="samedi">Samedi</option>
+                        </select>
+                    </div>
+                    
+                    <div class="lg:col-span-2">
+                        <label class="block text-gray-400 text-sm mb-2">Description</label>
+                        <textarea name="description" rows="3" placeholder="Description détaillée de la tâche..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 text-white"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">Heures estimées *</label>
+                        <input type="number" name="heures_estimees" required min="0.1" step="0.5" placeholder="Ex: 4" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">Heures déjà effectuées</label>
+                        <input type="number" name="heures_effectuees" min="0" step="0.5" value="0" placeholder="Ex: 2" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 text-white">
+                    </div>
+                    
+                    <div class="lg:col-span-2">
+                        <label class="block text-gray-400 text-sm mb-2">Remarques</label>
+                        <textarea name="remarques" rows="2" placeholder="Remarques ou notes supplémentaires..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 text-white"></textarea>
+                    </div>
+
+                    <div class="lg:col-span-2 flex justify-end">
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg transition font-medium text-lg">
+                            ✓ Enregistrer la Tâche
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Weekly View Selector -->
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div>
+                    <h3 class="text-lg font-bold text-white">Semaine {{ semaine_numero }} - {{ date_debut|date:"d/m" }} au {{ date_fin|date:"d/m/Y" }}</h3>
+                    <p class="text-gray-400 text-sm">{{ trimestre_label }}</p>
+                </div>
+                <a href="{% url 'historique_semaines' %}" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition">
+                    📊 Voir l'Historique
+                </a>
+            </div>
+
+            <!-- Tasks by Day -->
+            <div class="space-y-6">
+                {% for jour in jours %}
+                <div class="bg-gray-800 rounded-lg border border-gray-700">
+                    <div class="bg-blue-900 bg-opacity-30 px-4 md:px-6 py-4 border-b border-gray-700">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg md:text-xl font-bold text-blue-400">{{ jours_labels|get_item:jour }}</h3>
+                            <span class="bg-blue-500 bg-opacity-20 text-blue-400 px-3 py-1 rounded-full text-sm font-medium">
+                                {{ heures_par_jour|get_item:jour|floatformat:1 }}h
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-4 md:p-6">
+                        {% with taches=taches_par_jour|get_item:jour %}
+                        {% if taches %}
+                            {% for tache in taches %}
+                            <div class="bg-gray-750 rounded-lg p-4 border {% if tache.est_terminee %}border-green-700{% else %}border-gray-700{% endif %} mb-4">
+                                <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                                    <div class="flex-1">
+                                        <div class="flex items-start gap-3 mb-3">
+                                            <form method="POST" action="{% url 'toggle_tache' tache.id %}" class="inline">
+                                                {% csrf_token %}
+                                                <input type="checkbox" {% if tache.est_terminee %}checked{% endif %} onchange="this.form.submit()" class="mt-1 w-5 h-5 text-blue-500 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 cursor-pointer">
+                                            </form>
+                                            <div class="flex-1">
+                                                <h4 class="font-bold text-white text-lg mb-2 {% if tache.est_terminee %}line-through opacity-75{% endif %}">
+                                                    {{ tache.titre }}
+                                                </h4>
+                                                {% if tache.description %}
+                                                <p class="text-gray-400 text-sm mb-3 {% if tache.est_terminee %}line-through opacity-75{% endif %}">
+                                                    {{ tache.description }}
+                                                </p>
+                                                {% endif %}
+                                                <div class="flex flex-wrap gap-2 mb-3">
+                                                    <span class="bg-purple-500 bg-opacity-20 text-purple-400 px-3 py-1 rounded-full text-xs font-medium">
+                                                        Estimé: {{ tache.heures_estimees }}h
+                                                    </span>
+                                                    {% if tache.est_terminee %}
+                                                    <span class="bg-green-500 bg-opacity-20 text-green-400 px-3 py-1 rounded-full text-xs font-medium">
+                                                        ✓ Terminé: {{ tache.heures_effectuees }}h / {{ tache.heures_estimees }}h
+                                                    </span>
+                                                    {% else %}
+                                                    <span class="bg-yellow-500 bg-opacity-20 text-yellow-400 px-3 py-1 rounded-full text-xs font-medium">
+                                                        Effectué: {{ tache.heures_effectuees }}h / {{ tache.heures_estimees }}h
+                                                    </span>
+                                                    {% endif %}
+                                                </div>
+                                                {% if tache.remarques %}
+                                                <div class="bg-orange-900 bg-opacity-20 border border-orange-700 rounded-lg p-3">
+                                                    <p class="text-orange-400 text-xs font-medium mb-1">📝 Remarques:</p>
+                                                    <p class="text-orange-300 text-sm">{{ tache.remarques }}</p>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="ml-8">
+                                            <div class="w-full bg-gray-700 rounded-full h-3 mb-2">
+                                                <div class="bg-gradient-to-r from-{% if tache.est_terminee %}green{% else %}blue{% endif %}-500 to-{% if tache.est_terminee %}green{% else %}blue{% endif %}-400 h-3 rounded-full transition-all duration-300" style="width: {{ tache.pourcentage_completion }}%"></div>
+                                            </div>
+                                            <p class="text-{% if tache.est_terminee %}green-400 font-medium{% else %}gray-500{% endif %} text-xs">
+                                                {% if tache.est_terminee %}✓ Tâche complétée!{% else %}Progression: {{ tache.pourcentage_completion|floatformat:1 }}%{% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap lg:flex-col gap-2 lg:min-w-[140px]">
+                                        {% if not tache.est_terminee %}
+                                        <form method="POST" action="{% url 'ajouter_heures' tache.id %}" class="inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="heures" value="0.5">
+                                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap w-full">
+                                                +0.5h
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{% url 'ajouter_heures' tache.id %}" class="inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="heures" value="1">
+                                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap w-full">
+                                                +1h
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{% url 'ajouter_heures' tache.id %}" class="inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="heures" value="2">
+                                            <button type="submit" class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap w-full">
+                                                +2h
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                        <form method="POST" action="{% url 'supprimer_tache' tache.id %}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?');" class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap w-full">
+                                                🗑 Supprimer
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-gray-500 text-sm text-center py-4">Aucune tâche planifiée pour ce jour</p>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Weekly Summary -->
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 md:p-6 mt-6">
+                <h2 class="text-xl md:text-2xl font-bold mb-6">Résumé de la Semaine</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+                        <p class="text-gray-400 text-sm mb-2">Total Heures</p>
+                        <p class="text-3xl font-bold text-white">{{ heures_semaine|floatformat:1 }}h</p>
+                    </div>
+                    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+                        <p class="text-gray-400 text-sm mb-2">Tâches Complétées</p>
+                        <p class="text-3xl font-bold text-green-400">{{ taches_completees }}</p>
+                    </div>
+                    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+                        <p class="text-gray-400 text-sm mb-2">Tâches En Cours</p>
+                        <p class="text-3xl font-bold text-yellow-400">{{ taches_en_cours }}</p>
+                    </div>
+                    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+                        <p class="text-gray-400 text-sm mb-2">Salaire Semaine</p>
+                        <p class="text-3xl font-bold text-green-400">{{ salaire_semaine|floatformat:2 }} €</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template filter personnalisé pour accéder aux dict -->
+    {% load custom_filters %}
+</body>
+</html>

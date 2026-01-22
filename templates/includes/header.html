@@ -1,0 +1,111 @@
+<header class="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+
+    <!-- LOGO / BRAND -->
+    <div class="flex items-center gap-4">
+     
+      <div class="leading-tight">
+        <h1 class="text-2xl font-black text-white tracking-wide">
+          TASKO
+        </h1>
+        <p class="text-xs text-blue-400">
+        by ASITECH SOLUTION
+        </p>
+      </div>
+    </div>
+
+    <!-- USER MENU -->
+    {% if user.is_authenticated %}
+    <div class="relative">
+      <!-- Button -->
+      <button id="userMenuBtn"
+        class="flex items-center gap-3 bg-gray-800 hover:bg-gray-700 transition px-3 py-2 rounded-xl focus:outline-none">
+
+        {% if profil.photo %}
+        <img src="{{ profil.photo.url }}"
+             class="w-10 h-10 rounded-full object-cover border border-gray-600">
+        {% else %}
+        <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white">
+          {{ user.first_name.0|default:"U" }}{{ user.last_name.0|default:"" }}
+        </div>
+        {% endif %}
+
+        <div class="hidden md:block text-left">
+          <p class="text-sm font-semibold text-white">
+            {{ profil.nom_complet|default:user.username }}
+          </p>
+          <p class="text-xs text-gray-400">
+            {{ profil.domaine_specialisation|default:"Stagiaire" }}
+          </p>
+        </div>
+
+        <i class="fas fa-chevron-down text-gray-400 text-xs hidden md:block"></i>
+      </button>
+
+      <!-- Dropdown -->
+      <div id="userMenu"
+        class="hidden absolute right-0 mt-3 w-64 bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden">
+
+        <!-- Profile -->
+        <a href="{% url 'profil_stagiaire' %}"
+           class="flex items-start gap-3 px-4 py-4 hover:bg-gray-800 transition">
+          <i class="fas fa-user-circle text-blue-400 text-lg mt-1"></i>
+          <div>
+            <p class="text-sm font-semibold text-white">Mon profil</p>
+            <p class="text-xs text-gray-400">Informations personnelles</p>
+          </div>
+        </a>
+
+        <!-- Salary -->
+        <a href="#"
+           class="flex items-start gap-3 px-4 py-4 hover:bg-gray-800 transition">
+          <i class="fas fa-wallet text-green-400 text-lg mt-1"></i>
+          <div>
+            <p class="text-sm font-semibold text-white">Mes revenus</p>
+            <p class="text-xs text-gray-400">Salaires & heures</p>
+          </div>
+        </a>
+
+        <!-- Settings -->
+        <a href="#"
+           class="flex items-start gap-3 px-4 py-4 hover:bg-gray-800 transition">
+          <i class="fas fa-cog text-purple-400 text-lg mt-1"></i>
+          <div>
+            <p class="text-sm font-semibold text-white">Paramètres</p>
+            <p class="text-xs text-gray-400">Sécurité & préférences</p>
+          </div>
+        </a>
+
+        <div class="border-t border-gray-700"></div>
+
+        <!-- Logout -->
+        <a href="{% url 'deconnexion' %}"
+           class="flex items-start gap-3 px-4 py-4 hover:bg-red-500/10 transition">
+          <i class="fas fa-sign-out-alt text-red-400 text-lg mt-1"></i>
+          <div>
+            <p class="text-sm font-semibold text-red-400">Déconnexion</p>
+            <p class="text-xs text-gray-400">Quitter la session</p>
+          </div>
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Dropdown JS -->
+  <script>
+    const btn = document.getElementById("userMenuBtn");
+    const menu = document.getElementById("userMenu");
+
+    if (btn) {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menu.classList.toggle("hidden");
+      });
+
+      document.addEventListener("click", () => {
+        menu.classList.add("hidden");
+      });
+    }
+  </script>
+</header>

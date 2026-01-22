@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Historique des semaines | TASKO{% endblock %}
+
+{% block content %}
+<div class="px-4 py-8 max-w-7xl mx-auto text-gray-200">
+
+    <!-- Titre -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold flex items-center gap-3">
+            <i class="fa-solid fa-calendar-week text-emerald-400"></i>
+            Historique des semaines
+        </h1>
+        <p class="text-gray-400 mt-1">
+            Vue globale de tes heures, tâches et salaires
+        </p>
+    </div>
+
+    <!-- Stats globales -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+
+        <div class="bg-slate-900 rounded-xl p-6 shadow">
+            <div class="flex items-center gap-4">
+                <i class="fa-solid fa-clock text-3xl text-blue-400"></i>
+                <div>
+                    <p class="text-gray-400 text-sm">Heures totales</p>
+                    <p class="text-2xl font-bold">{{ total_heures }} h</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 rounded-xl p-6 shadow">
+            <div class="flex items-center gap-4">
+                <i class="fa-solid fa-money-bill-wave text-3xl text-green-400"></i>
+                <div>
+                    <p class="text-gray-400 text-sm">Salaire total</p>
+                    <p class="text-2xl font-bold">{{ total_salaire }} FCFA</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 rounded-xl p-6 shadow">
+            <div class="flex items-center gap-4">
+                <i class="fa-solid fa-chart-line text-3xl text-purple-400"></i>
+                <div>
+                    <p class="text-gray-400 text-sm">Moyenne / semaine</p>
+                    <p class="text-2xl font-bold">{{ moyenne_heures }} h</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Liste des semaines -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        {% for semaine in semaines %}
+        <div class="bg-slate-900 rounded-xl p-6 shadow hover:shadow-xl transition">
+
+            <!-- En-tête -->
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-calendar text-emerald-400"></i>
+                    Semaine {{ semaine.numero_semaine }} – {{ semaine.annee }}
+                </h3>
+
+                {% if semaine.evaluation_tuteur %}
+                <span class="bg-emerald-400/20 text-emerald-400 px-3 py-1 rounded-full text-sm">
+                    ⭐ {{ semaine.evaluation_tuteur }}/5
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- Infos -->
+            <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                <div>
+                    <p class="text-gray-400">Période</p>
+                    <p>{{ semaine.date_debut }} → {{ semaine.date_fin }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400">Salaire</p>
+                    <p class="font-semibold">{{ semaine.salaire_calcule }} FCFA</p>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="space-y-2 mb-4 text-sm text-gray-400">
+                <p>
+                    <i class="fa-solid fa-list-check mr-2"></i>
+                    {{ semaine.taches_completees }} / {{ semaine.nombre_taches }} tâches
+                </p>
+                <p>
+                    <i class="fa-solid fa-clock mr-2"></i>
+                    {{ semaine.heures_totales }} heures
+                </p>
+            </div>
+
+            <!-- Progression -->
+            <div class="w-full bg-gray-800 rounded-full h-3 mb-4">
+                <div class="bg-emerald-400 h-3 rounded-full"
+                     style="width: {{ semaine.taux_completion }}%;">
+                </div>
+            </div>
+
+            <!-- Commentaires -->
+            {% if semaine.commentaire_stagiaire or semaine.commentaire_tuteur %}
+            <div class="mt-4 space-y-2 text-sm">
+                {% if semaine.commentaire_stagiaire %}
+                <p>
+                    <span class="text-emerald-400 font-semibold">Stagiaire :</span>
+                    {{ semaine.commentaire_stagiaire }}
+                </p>
+                {% endif %}
+                {% if semaine.commentaire_tuteur %}
+                <p>
+                    <span class="text-blue-400 font-semibold">Tuteur :</span>
+                    {{ semaine.commentaire_tuteur }}
+                </p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+        </div>
+        {% empty %}
+        <p class="text-gray-400 col-span-full text-center">
+            Aucune semaine enregistrée.
+        </p>
+        {% endfor %}
+
+    </div>
+
+</div>
+{% endblock %}

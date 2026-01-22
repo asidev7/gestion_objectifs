@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Stagiaire - Suivi Hebdomadaire</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+            <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-blue-400">Suivi des Heures</h1>
+                    <p class="text-gray-400 text-sm">Marie Dupont - Développeur Web</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-xs text-gray-400">Taux horaire</p>
+                        <p class="text-lg font-bold text-blue-400">6.69 €/h</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold">MD</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="container mx-auto px-4 py-6">
+            <!-- Salary Overview - Trimestre -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg p-6 border border-blue-500 shadow-lg">
+                    <p class="text-blue-200 text-sm mb-2">Salaire du Mois (Janvier)</p>
+                    <p class="text-4xl font-bold text-white mb-1" id="salaire-mois">850 €</p>
+                    <p class="text-blue-200 text-xs">127 heures travaillées</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg p-6 border border-purple-500 shadow-lg">
+                    <p class="text-purple-200 text-sm mb-2">Salaire Trimestre (T1 2026)</p>
+                    <p class="text-4xl font-bold text-white mb-1" id="salaire-trimestre">2,340 €</p>
+                    <p class="text-purple-200 text-xs">350 heures | Janv + Fév + Mars</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-green-600 to-green-800 rounded-lg p-6 border border-green-500 shadow-lg">
+                    <p class="text-green-200 text-sm mb-2">Heures Cette Semaine</p>
+                    <p class="text-4xl font-bold text-white mb-1" id="heures-semaine">32h</p>
+                    <p class="text-green-200 text-xs">5 tâches en cours</p>
+                </div>
+            </div>
+
+            <!-- Add Task Form -->
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 md:p-6 mb-6">
+                <h2 class="text-xl md:text-2xl font-bold mb-6 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Ajouter une Tâche
+                </h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">Nom de la tâche *</label>
+                        <input type="text" id="task-name" placeholder="Ex: Développer module authentification" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">Jour de la semaine *</label>
+                        <select id="task-day" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 text-white">
+                            <option value="">Sélectionner un jour</option>
+                            <option value="Lundi">Lundi</option>
+                            <option value="Mardi">Mardi</option>
+                            <option value="Mercredi">Mercredi</option>
+                            <option value="Jeudi">Jeudi</option>
+                            <option value="Vendredi">Vendredi</option>
+                            <option value="Samedi">Samedi</option>
+                        </select>
+                    </div>
+                    
+                    <div class="lg:col-span-2">
+                        <label class="block text-gray-400 text-sm mb-2">Description</label>
+                        <textarea id="task-desc" rows="3" placeholder="Description détaillée de la tâche..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 text-white"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">Heures estimées *</label>
+                        <input type="number" id="task-estimated" min="0" step="0.5" placeholder="Ex: 4" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">Heures déjà effectuées</label>
+                        <input type="number" id="task-worked" min="0" step="0.5" value="0" placeholder="Ex: 2" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 text-white">
+                    </div>
+                    
+                    <div class="lg:col-span-2">
+                        <label class="block text-gray-400 text-sm mb-2">Remarques</label>
+                        <textarea id="task-remarks" rows="2" placeholder="Remarques ou notes supplémentaires..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 text-white"></textarea>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex justify-end">
+                    <button onclick="ajouterTache()" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg transition font-medium text-lg">
+                        ✓ Enregistrer la Tâche
+                    </button>
+                </div>
+            </div>
+
+            <!-- Weekly View Selector -->
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div>
+                    <h3 class="text-lg font-bold text-white">Semaine du 20 - 25 Janvier 2026</h3>
+                    <p class="text-gray-400 text-sm">Semaine 4 - T1 2026</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition">
+                        ← Semaine Précédente
+                    </button>
+                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition">
+                        Semaine Suivante →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tasks by Day -->
+            <div class="space-y-6" id="weekly-tasks">
+                <!-- Lundi -->
+                <div class="bg-gray-800 rounded-lg border border-gray-700">
+                    <div class="bg-blue-900 bg-opacity-30 px-4 md:px-6 py-4 border-b border-gray-700">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg md:text-xl font-bold text-blue-400">Lundi 20 Janvier</h3>
+                            <span class="bg-blue-500 bg-opacity-20 text-blue-400 px-3 py-1 rounded-full text-sm font-medium" id="lundi-hours">0h</span>
+                        </div>
+                    </div>
+                    <div class="p-4 md:p-6" id="lundi-tasks">
+                        <div class="bg-gray-750 rounded-lg p-4 border border-gray-700 task-item mb-4">
+                            <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                                <div class="flex-1">
+                                    <div class="flex items-start gap-3 mb-3">
+                                        <input type="checkbox" class="mt-1 w-5 h-5 text-blue-500 bg-gray-700 border-gray-600 rounded focus:ring-blue-500" onchange="toggleTask(this)">
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-white text-lg mb-2">Développer module authentification</h4>
+                                            <p class="text-gray-400 text-sm mb-3">Créer le système de login avec JWT et validation des tokens. Intégration avec la base de données PostgreSQL.</p>
+                                            <div class="flex flex-wrap gap-2 mb-3">
+                                                <span class="bg-purple-500 bg-opacity-20 text-purple-400 px-3 py-1 rounded-full text-xs font-medium">Estimé: 4h</span>
+                                                <span class="bg-yellow-500 bg-opacity-20 text-yellow-400 px-3 py-1 rounded-full text-xs font-medium hours-display">Effectué: 1.5h / 4h</span>
+                                            </div>
+                                            <div class="bg-orange-900 bg-opacity-20 border border-orange-700 rounded-lg p-3">
+                                                <p class="text-orange-400 text-xs font-medium mb-1">📝 Remarques:</p>
+                                                <p class="text-orange-300 text-sm">Prévoir tests unitaires. Coordonner avec l'équipe backend.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ml-8">
+                                        <div class="w-full bg-gray-700 rounded-full h-3 mb-2">
+                                            <div class="bg-gradient-to-r from-blue-500 to-blue-400 h-3 rounded-full progress-bar transition-all duration-300" style="width: 37.5%"></div>
+                                        </div>
+                                        <p class="text-gray-500 text-xs">Progression: 37.5%</p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap lg:flex-col gap-2 lg:min-w-[140px]">
+                                    <button onclick="ajouterHeure(this, 0.5)" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap flex-1 lg:flex-none">
+                                        +0.5h
+                                    </button>
+                                    <button onclick="ajouterHeure(this, 1)" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap flex-1 lg:flex-none">
+                                        +1h
+                                    </button>
+                                    <button onclick="ajouterHeure(this, 2)" class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap flex-1 lg:flex-none">
+                                        +2h
+                                    </button>
+                                    <button onclick="supprimerTache(this)" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap flex-1 lg:flex-none">
+                                        🗑 Supprimer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 text-sm text-center py-4">Aucune autre tâche pour ce jour</p>
+                    </div>
+                </div>
+
+                <!-- Mardi -->
+                <div class="bg-gray-800 rounded-lg border border-gray-700">
+                    <div class="bg-blue-900 bg-opacity-30 px-4 md:px-6 py-4 border-b border-gray-700">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg md:text-xl font-bold text-blue-400">Mardi 21 Janvier</h3>
+                            <span class="bg-blue-500 bg-opacity-20 text-blue-400 px-3 py-1 rounded-full text-sm font-medium" id="mardi-hours">0h</span>
+                        </div>
+                    </div>
+                    <div class="p-4 md:p-6" id="mardi-tasks">
+                        <p class="text-gray-500 text-sm text-center py-4">Aucune tâche planifiée</p>
+                    </div>
+                </div>
+
+                <!-- Mercredi -->
+                <div class="bg-gray-800 rounded-lg border border-gray-700">
+                    <div class="bg-blue-900 bg-opacity-30 px-4 md:px-6 py-4 border-b border-gray-700">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg md:text-xl font-bold text-blue-400">Mercredi 22 Janvier</h3>
+                            <span class="bg-blue-500 bg-opacity-20 text-blue-400 px-3 py-1 rounded-full text-sm font-medium" id="mercredi-hours">5h</span>
+                        </div>
+                    </div>
+                    <div class="p-4 md:p-6" id="mercredi-tasks">
+                        <div class="bg-gray-750 rounded-lg p-4 border border-green-700 task-item task-completed">
+                            <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                                <div class="flex-1">
+                                    <div class="flex items-start gap-3 mb-3">
+                                        <input type="checkbox" checked class="mt-1 w-5 h-5 text-blue-500 bg-gray-700 border-gray-600 rounded focus:ring-blue-500" onchange="toggleTask(this)">
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-white text-lg mb-2 line-through opacity-75">Tests unitaires module paiement</h4>
+                                            <p class="text-gray-400 text-sm mb-3 line-through opacity-75">Écrire les tests pour valider les fonctions de paiement et remboursement.</p>
+                                            <div class="flex flex-wrap gap-2 mb-3">
+                                                <span class="bg-purple-500 bg-opacity-20 text-purple-400 px-3 py-1 rounded-full text-xs font-medium">Estimé: 5h</span>
+                                                <span class="bg-green-500 bg-opacity-20 text-green-400 px-3 py-1 rounded-full text-xs font-medium">✓ Terminé: 5h / 5h</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ml-8">
+                                        <div class="w-full bg-gray-700 rounded-full h-3 mb-2">
+                                            <div class="bg-gradient-to-r from-green-500 to-green-400 h-3 rounded-full" style="width: 100%"></div>
+                                        </div>
+                                        <p class="text-green-400 text-xs font-medium">✓ Tâche complétée!</p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap lg:flex-col gap-2 lg:min-w-[140px]">
+                                    <button onclick="supprimerTache(this)" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap flex-1 lg:flex-none">
+                                        🗑 Supprimer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jeudi -->
+                <div class="bg-gray-800 rounded-lg border border-gray-700">
+                    <div class="bg-blue-900 bg-opacity-30 px-4 md:px-6 py-4 border-b border-gray-700">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg md:text-xl font-bold text-blue-400">Jeudi 23 Janvier</h3>
+                            <span class="bg-blue-500 bg-opacity-20 text-blue-400 px-3 py-1 rounded-full text-sm font-medium" id="jeudi-hours">0h</span>
+                        </div>
+                    </div>
+                    <div class="p-4 md:p-6" id="jeudi-tasks">
+                        <p class="text-gray-500 text-sm text-center py-4">Aucune tâche planifiée</p>
+                    </div>
+                </div>
+
+                <!-- Vendredi -->
+                <div class="bg-gray-800 rounded-lg border border-gray-700">
+                    <div class="bg-blue-900 bg-opacity-30 px-4 md:px-6 py-4 border-b border-gray-700">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg md:text-xl font-bold text-blue-400">Vendredi 24 Janvier</h3>
+                            <span class="bg-blue-500 bg-opacity-20 text-blue-400 px-3 py-1 rounded-full text-sm font-medium" id="vendredi-hours">0h</span>
+                        </div>
+                    </div>
+                    <div class="p-4 md:p-6" id="vendredi-tasks">
+                        <p class="text-gray-500 text-sm text-center py-4">Aucune tâche planifiée</p>
+                    </div>
+                </div>
+
+                <!-- Samedi -->
+                <div class="bg-gray-800 rounded-lg border border-gray-700">
+                    <div class="bg-blue-900 bg-opacity-30 px-4 md:px-6 py-4 border-b border-gray-700">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg md:text-xl font-bold text-blue-400">Samedi 25 Janvier</h3>
+                            <span class="bg-blue-500 bg-opacity-20 text-blue-400 px-3 py-1 rounded-full text-sm font-medium" id="samedi-hours">0h</span>
+                        </div>
+                    </div>
+                    <div class="p-4 md:p-6" id="samedi-tasks">
+                        <p class="text-gray-500 text-sm text-center py-4">Aucune tâche planifiée</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Summary -->
+            <div class="bg-gray-800 rounded-lg border border-gray-700 p-4 md:p-6 mt-6">
+                <h2 class="text-xl md:text-2xl font-bold mb-6">Résumé de la Semaine</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+                        <p class="text-gray-400 text-sm mb-2">Total Heures</p>
+                        <p class="text-3xl font-bold text-white" id="summary-total">6.5h</p>
+                    </div>
+                    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+                        <p class="text-gray-400 text-sm mb-2">Tâches Complétées</p>
+                        <p class="text-3xl font-bold text-green-400" id="summary-completed">1</p>
+                    </div>
+                    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+                        <p class="text-gray-400 text-sm mb-2">Tâches En Cours</p>
+                        <p class="text-3xl font-bold text-yellow-400" id="summary-progress">1</p>
+                    </div>
+                    <div class="bg-gray-750 rounded-lg p-4 border border-gray-700">
+                        <p class="text-gray-400 text-sm mb-2">Salaire Semaine</p>
+                        <p class="text-3xl font-bold text-green-400" id="summary-salary">43.49 €</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tauxHoraire = 6.69;
+        let totalHeuresMois = 127;
+        let totalHeuresSemaine = 6.5;
+
+        function ajouterTache() {
+            const nom = document.getElementById('task-name').value;
+            const jour = document.getElementById('task-day').value;
+            const desc = document.getElementById('task-desc').value;
+            const estimated = parseFloat(document.getElementById('task-estimated').value) || 0;
+            const worked = parseFloat(document.getElementById('task-worked').value) || 0;
+            const remarks = document.getElementById('task-remarks').value;
+
+            if (!nom || !jour || !estimated) {
+                alert('Veuillez remplir les champs obligatoires (nom, jour, heures estimées)');
+                return;
+            }
+
+            const percentage = (worked / estimated) * 100;
+            const isCompleted = percentage >= 100;
+            const jourLower = jour.toLowerCase();
+
+            const taskHTML = `
+                <div class="bg-gray-750 rounded-lg p-4 border border-gray-700 task-item mb-4 ${isCompleted ? 'task-completed border-green-700' : ''}">
+                    <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-start gap-3 mb-3">
+                                <input type="checkbox" ${isCompleted ? 'checked' : ''} class="mt-1 w-5 h-5 text-blue-500 bg-gray-700 border-gray-600 rounded focus:ring-blue-500" onchange="toggleTask(this)">
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-white text-lg mb-2 ${isCompleted ? 'line-through opacity-75' : ''}">${nom}</h4>
+                                    ${desc ? `<p class="text-gray-400 text-sm mb-3 ${isCompleted ? 'line-through opacity-75' : ''}">${desc}</p>` : ''}
+                                    <div class="flex flex-wrap gap-2 mb-3">
+                                        <span class="bg-purple-500 bg-opacity-20 text-purple-400 px-3 py-1 rounded-full text-xs font-medium">Estimé: ${estimated}h</span>
+                                        <span class="bg-${isCompleted ? 'green' : 'yellow'}-500 bg-opacity-20 text-${isCompleted ? 'green' : 'yellow'}-400 px-3 py-1 rounded-full text-xs font-medium hours-display">${isCompleted ? '✓ Terminé' : 'Effectué'}: ${worked}h / ${estimated}h</span>
+                                    </div>
+                                    ${remarks ? `
+                                    <div class="bg-orange-900 bg-opacity-20 border border-orange-700 rounded-lg p-3">
+                                        <p class="text-orange-400 text-xs font-medium mb-1">📝 Remarques:</p>
+                                        <p class="text-orange-300 text-sm">${remarks}</p>
+                                    </div>` : ''}
+                                </div>
+                            </div>
+                            <div class="ml-8">
+                                <div class="w-full bg-gray-700 rounded-full h-3 mb-2">
+                                    <div class="bg-gradient-to-r from-${isCompleted ? 'green' : 'blue'}-500 to-${isCompleted ? 'green' : 'blue'}-400 h-3 rounded-full progress-bar transition-all duration-300" style="width: ${percentage}%"></div>
+                                </div>
+                                <p class="text-${isCompleted ? 'green' : 'gray'}-${isCompleted ? '400' : '500'} text-xs ${isCompleted ? 'font-medium' : ''}">
+                                    ${isCompleted ? '✓ Tâche complétée!' : `Progression: ${percentage.toFixed(1)}%`}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap lg:flex-col gap-2 lg:min-w-[140px]">
+                            ${!isCompleted ? `
+                            <button onclick="ajouterHeure(this, 0.5)" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap flex-1 lg:flex-none">
+                                +0.5h
+                            </button>
+                            <button onclick="ajouterHeure(this, 1)" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap flex-1 lg:flex-none">
+                                +1h
+                            </button>
+                            <button onclick="ajouterHeure(this, 2)" class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap flex-1 lg:flex-none">
+                                +2h
+                            </button>` : ''}
+                            <button onclick="supprimerTache(this)" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition font-medium whitespace-nowrap flex-1 lg:flex-none">
+                                🗑 Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const container = document.getElementById(`${jourLower}-tasks`);
+            const emptyMessage = container.querySelector('p.text-gray-500');
+            if (emptyMessage) emptyMessage.remove();
+            container.insertAdjacentHTML('afterbegin', taskHTML);
+
+            // Mise à jour des heures du jour
+            mettreAJourHeuresJour(jourLower, worked);
+            
+            // Mise à jour des totaux
+            totalHeuresSemaine += worked;
+            totalHeuresMois += worked;
+            mettreAJourSalaires();
+            mettreAJourResume();
+
+            // Reset form
+            document.getElementById('task-name').value = '';
+            document.getElementById('task-day').value = '';
+            document.getElementById('task-desc').value = '';
+            document.getElementById('task-estimated').value = '';
+            document.getElementById('task-worked').value = '0';
+            document.getElementById('task-remarks').value = '';
+
+            alert('✓ Tâche ajoutée avec succès!');
+        }
+
+        function ajouterHeure(button, heures) {
+            const taskItem = button.closest('.task-item');
+            const hoursDisplay = taskItem.querySelector('.hours-display');
+            const progressBar = taskItem.querySelector('.progress-bar');
+            const progressText = taskItem.querySelector('.ml-8 p');
+            
+            const text = hoursDisplay.textContent;
+            const match = text.match(/([\d.]+)h \/ ([\d.]+)h/);
+            
+            if (match) {
+                let current = parseFloat(match[1]);
+                const total = parseFloat(match[2]);
+                
+                if (current < total) {
+                    current = Math.min(current + heures, total);
+                    hoursDisplay.textContent = `Effectué: ${current}h / ${total}h`;
+                    
+                    const percentage = (current / total) * 100;
+                    progressBar.style.width = percentage + '%';
+                    progressText.textContent = `Progression: ${percentage.toFixed(1)}%`;
+                    
+                    if (percentage >= 100) {
+                        progressBar.classList.remove('from-blue-500', 'to-blue-400');
+                        progressBar.classList.add('from-green-500', 'to-green-400');
+                        progressText.textContent = '✓ Tâche complétée!';
+                        progressText.classList.add('text-green-400', 'font-medium');
+                        progressText.classList.remove('text-gray-500');
+                        hoursDisplay.textContent = `✓ Terminé: ${current}h / ${total}h`;
+                        hoursDisplay.classList.remove('bg-yellow-500', 'text-yellow-400');
+                        hoursDisplay.classList.add('bg-green-500', 'text-green-400');
+                        
+                        // Cacher les boutons +heures
+                        const buttons = taskItem.querySelectorAll('button[onclick^="ajouterHeure"]');
+                        buttons.forEach(btn => btn.style.display = 'none');
+                    }
+
+                    // Mise à jour totaux
+                    totalHeuresSemaine += heures;
+                    totalHeuresMois += heures;
+                    
+                    // Mise à jour heures du jour
+                    const dayContainers = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+                    for (let day of dayContainers) {
+                        const container = document.getElementById(`${day}-tasks`);
+                        if (container.contains(taskItem)) {
+                            mettreAJourHeuresJour(day, heures);
+                            break;
+                        }
+                    }
+                    
+                    mettreAJourSalaires();
+                    mettreAJourResume();
+                }
+            }
+        }
+
+        function toggleTask(checkbox) {
+            const taskItem = checkbox.closest('.task-item');
+            const title = taskItem.querySelector('h4');
+            const desc = taskItem.querySelector('p.text-gray-400');
+            
+            if (checkbox.checked) {
+                taskItem.classList.add('task-completed', 'border-green-700');
+                title.classList.add('line-through', 'opacity-75');
+                if (desc) desc.classList.add('line-through', 'opacity-75');
+            } else {
+                taskItem.classList.remove('task-completed', 'border-green-700');
+                title.classList.remove('line-through', 'opacity-75');
+                if (desc) desc.classList.remove('line-through', 'opacity-75');
+            }
+        }
+
+        function supprimerTache(button) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+                const taskItem = button.closest('.task-item');
+                const hoursDisplay = taskItem.querySelector('.hours-display');
+                
+                // Soustraire les heures avant suppression
+                const text = hoursDisplay.textContent;
+                const match = text.match(/([\d.]+)h \//);
+                if (match) {
+                    const heures = parseFloat(match[1]);
+                    totalHeuresSemaine -= heures;
+                    totalHeuresMois -= heures;
+                    
+                    // Mise à jour heures du jour
+                    const dayContainers = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+                    for (let day of dayContainers) {
+                        const container = document.getElementById(`${day}-tasks`);
+                        if (container.contains(taskItem)) {
+                            mettreAJourHeuresJour(day, -heures);
+                            break;
+                        }
+                    }
+                }
+                
+                const container = taskItem.parentElement;
+                taskItem.remove();
+                
+                // Afficher message si aucune tâche
+                if (container.querySelectorAll('.task-item').length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Aucune tâche planifiée</p>';
+                }
+                
+                mettreAJourSalaires();
+                mettreAJourResume();
+            }
+        }
+
+        function mettreAJourHeuresJour(jour, heures) {
+            const badge = document.getElementById(`${jour}-hours`);
+            if (badge) {
+                let currentHours = parseFloat(badge.textContent) || 0;
+                currentHours = Math.max(0, currentHours + heures);
+                badge.textContent = currentHours.toFixed(1) + 'h';
+            }
+        }
+
+        function mettreAJourSalaires() {
+            const salaireMois = Math.round(totalHeuresMois * tauxHoraire);
+            const salaireTrimestre = Math.round((totalHeuresMois + 223) * tauxHoraire);
+            const salaireSemaine = (totalHeuresSemaine * tauxHoraire).toFixed(2);
+            
+            document.getElementById('salaire-mois').textContent = salaireMois + ' €';
+            document.getElementById('salaire-trimestre').textContent = salaireTrimestre + ' €';
+            document.getElementById('heures-semaine').textContent = totalHeuresSemaine.toFixed(1) + 'h';
+            document.getElementById('summary-total').textContent = totalHeuresSemaine.toFixed(1) + 'h';
+            document.getElementById('summary-salary').textContent = salaireSemaine + ' €';
+        }
+
+        function mettreAJourResume() {
+            const allTasks = document.querySelectorAll('.task-item');
+            let completed = 0;
+            let inProgress = 0;
+            
+            allTasks.forEach(task => {
+                const checkbox = task.querySelector('input[type="checkbox"]');
+                if (checkbox && checkbox.checked) {
+                    completed++;
+                } else {
+                    inProgress++;
+                }
+            });
+            
+            document.getElementById('summary-completed').textContent = completed;
+            document.getElementById('summary-progress').textContent = inProgress;
+        }
+    </script>
+</body>
+</html>

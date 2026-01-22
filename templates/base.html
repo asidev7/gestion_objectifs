@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Lato', sans-serif; }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    {% include "includes/header.html" %}
+
+    <!-- Main -->
+    <main class="flex-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 mt-10">
+        <div class="container mx-auto px-4 py-6 text-center text-gray-400 text-sm">
+            © {{ now|date:"Y" }} • Suivi des stagiaires  
+            <span class="block sm:inline">— Tous droits réservés</span>
+        </div>
+    </footer>
+
+</body>
+</html>

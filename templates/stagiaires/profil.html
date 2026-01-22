@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mon profil | TASKO{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8 text-gray-200">
+
+    <!-- Titre -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold flex items-center gap-3">
+            <i class="fa-solid fa-user text-emerald-400"></i>
+            Mon profil
+        </h1>
+        <p class="text-gray-400 mt-1">
+            Informations personnelles et statistiques
+        </p>
+    </div>
+
+    <!-- Carte profil -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Colonne gauche : photo + stats -->
+        <div class="bg-slate-900 rounded-xl p-6 shadow">
+
+            <div class="flex flex-col items-center text-center">
+                {% if profil.photo %}
+                    <img src="{{ profil.photo.url }}"
+                         class="w-32 h-32 rounded-full object-cover border-4 border-emerald-400 mb-4">
+                {% else %}
+                    <div class="w-32 h-32 rounded-full bg-gray-700 flex items-center justify-center mb-4">
+                        <i class="fa-solid fa-user text-4xl text-gray-400"></i>
+                    </div>
+                {% endif %}
+
+                <h2 class="text-xl font-bold">
+                    {{ profil.nom_complet }}
+                </h2>
+                <p class="text-gray-400 text-sm">
+                    {{ profil.utilisateur.email }}
+                </p>
+            </div>
+
+            <!-- Stats -->
+            <div class="mt-6 space-y-4 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Tâches</span>
+                    <span class="font-semibold">{{ total_taches }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Terminées</span>
+                    <span class="font-semibold text-emerald-400">{{ taches_terminees }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Heures totales</span>
+                    <span class="font-semibold">{{ total_heures }} h</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne droite : formulaire -->
+        <div class="lg:col-span-2 bg-slate-900 rounded-xl p-6 shadow">
+
+            <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-blue-400"></i>
+                Modifier mes informations
+            </h3>
+
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-sm text-gray-400">Téléphone</label>
+                        <input type="text" name="telephone"
+                               value="{{ profil.telephone }}"
+                               class="w-full mt-1 bg-gray-800 border border-gray-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                    </div>
+
+                    <div>
+                        <label class="text-sm text-gray-400">Ville</label>
+                        <input type="text" name="ville"
+                               value="{{ profil.ville }}"
+                               class="w-full mt-1 bg-gray-800 border border-gray-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                    </div>
+
+                    <div>
+                        <label class="text-sm text-gray-400">Adresse</label>
+                        <input type="text" name="adresse"
+                               value="{{ profil.adresse }}"
+                               class="w-full mt-1 bg-gray-800 border border-gray-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                    </div>
+
+                    <div>
+                        <label class="text-sm text-gray-400">Code postal</label>
+                        <input type="text" name="code_postal"
+                               value="{{ profil.code_postal }}"
+                               class="w-full mt-1 bg-gray-800 border border-gray-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-400">Photo de profil</label>
+                    <input type="file" name="photo"
+                           class="w-full mt-2 text-sm text-gray-400 file:bg-gray-800 file:border-0 file:rounded-lg file:px-4 file:py-2 file:text-gray-300 hover:file:bg-gray-700">
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit"
+                            class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg flex items-center gap-2 transition">
+                        <i class="fa-solid fa-save"></i>
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Évaluations -->
+    <div class="mt-10 bg-slate-900 rounded-xl p-6 shadow">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-star text-yellow-400"></i>
+            Dernières évaluations
+        </h3>
+
+        {% if evaluations %}
+            <div class="space-y-4">
+                {% for eval in evaluations %}
+                <div class="bg-gray-800 rounded-lg p-4 text-sm">
+                    <div class="flex justify-between mb-1">
+                        <span class="text-gray-400">{{ eval.date_evaluation }}</span>
+                        <span class="text-yellow-400 font-bold">
+                            ⭐ {{ eval.note }}/5
+                        </span>
+                    </div>
+                    <p class="text-gray-300">{{ eval.commentaire }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-400">Aucune évaluation disponible.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
