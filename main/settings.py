@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-pj+-=3@h2l(h7b10b6zg)ta^*s@%y9vasjp#xc*=f9#lp1%x56
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['tasko.asitechsolution.cloud']
 
 
 # Application definition
