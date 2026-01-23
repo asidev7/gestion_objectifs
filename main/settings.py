@@ -133,3 +133,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Dossier collectstatic pou
 # === MEDIA FILES ===
 MEDIA_URL = '/media/'  # URL publique pour les fichiers uploadés
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Dossier pour stocker les fichiers uploadés
+
+# URL vers laquelle Django redirige si l'utilisateur n’est pas connecté
+LOGIN_URL = '/login/'
